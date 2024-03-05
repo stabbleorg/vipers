@@ -89,117 +89,127 @@ impl Display for CmpError {
     }
 }
 
-// #[cfg(test)]
-// #[cfg(not(tarpaulin_include))]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+#[cfg(not(tarpaulin_include))]
+mod tests {
+    use super::*;
 
-//     #[test]
-//     fn test_program_errors_equal() {
-//         assert_eq!(
-//             anchor_lang::error::Error::ProgramError(ProgramError::InvalidArgument.into())
-//                 .into_cmp_error(),
-//             anchor_lang::error::Error::ProgramError(ProgramError::InvalidArgument.into())
-//                 .into_cmp_error()
-//         );
-//     }
+    #[test]
+    fn test_program_errors_equal() {
+        assert_eq!(
+            anchor_lang::error::Error::from(ProgramError::InvalidArgument)
+                .with_source(source!())
+                .into_cmp_error(),
+            anchor_lang::error::Error::from(ProgramError::InvalidArgument)
+                .with_source(source!())
+                .into_cmp_error()
+        );
+    }
 
-//     #[test]
-//     fn test_program_errors_equal_custom() {
-//         assert_eq!(
-//             anchor_lang::error::Error::ProgramError(ProgramError::Custom(10).into())
-//                 .into_cmp_error(),
-//             anchor_lang::error::Error::ProgramError(ProgramError::Custom(10).into())
-//                 .into_cmp_error()
-//         );
-//     }
+    #[test]
+    fn test_program_errors_equal_custom() {
+        assert_eq!(
+            anchor_lang::error::Error::from(ProgramError::Custom(10))
+                .with_source(source!())
+                .into_cmp_error(),
+            anchor_lang::error::Error::from(ProgramError::Custom(10))
+                .with_source(source!())
+                .into_cmp_error()
+        );
+    }
 
-//     #[test]
-//     fn test_program_errors_mismatch() {
-//         assert_ne!(
-//             anchor_lang::error::Error::ProgramError(ProgramError::InvalidArgument.into())
-//                 .into_cmp_error(),
-//             anchor_lang::error::Error::ProgramError(ProgramError::AccountAlreadyInitialized.into())
-//                 .into_cmp_error()
-//         );
-//     }
+    #[test]
+    fn test_program_errors_mismatch() {
+        assert_ne!(
+            anchor_lang::error::Error::from(ProgramError::InvalidArgument)
+                .with_source(source!())
+                .into_cmp_error(),
+            anchor_lang::error::Error::from(ProgramError::AccountAlreadyInitialized)
+                .with_source(source!())
+                .into_cmp_error()
+        );
+    }
 
-//     #[test]
-//     fn test_program_errors_mismatch_custom() {
-//         assert_ne!(
-//             anchor_lang::error::Error::ProgramError(ProgramError::Custom(10).into())
-//                 .into_cmp_error(),
-//             anchor_lang::error::Error::ProgramError(ProgramError::Custom(11).into())
-//                 .into_cmp_error()
-//         );
-//     }
+    #[test]
+    fn test_program_errors_mismatch_custom() {
+        assert_ne!(
+            anchor_lang::error::Error::from(ProgramError::Custom(10))
+                .with_source(source!())
+                .into_cmp_error(),
+            anchor_lang::error::Error::from(ProgramError::Custom(11))
+                .with_source(source!())
+                .into_cmp_error()
+        );
+    }
 
-//     #[test]
-//     fn test_program_errors_equal_none() {
-//         assert_eq!(None.into_cmp_error(), None.into_cmp_error());
-//     }
+    #[test]
+    fn test_program_errors_equal_none() {
+        assert_eq!(None.into_cmp_error(), None.into_cmp_error());
+    }
 
-//     #[test]
-//     fn test_program_errors_mismatch_random() {
-//         assert_ne!(
-//             None.into_cmp_error(),
-//             anchor_lang::error::Error::ProgramError(ProgramError::Custom(11).into())
-//                 .into_cmp_error()
-//         );
-//     }
+    #[test]
+    fn test_program_errors_mismatch_random() {
+        assert_ne!(
+            None.into_cmp_error(),
+            anchor_lang::error::Error::from(ProgramError::Custom(11))
+                .with_source(source!())
+                .into_cmp_error()
+        );
+    }
 
-//     #[test]
-//     fn test_program_errors_mismatch_anchor_program() {
-//         assert_ne!(
-//             error!(ErrorCode::MyError).into_cmp_error(),
-//             anchor_lang::error::Error::ProgramError(ProgramError::Custom(11).into())
-//                 .into_cmp_error()
-//         );
-//     }
+    #[test]
+    fn test_program_errors_mismatch_anchor_program() {
+        assert_ne!(
+            error!(ErrorCode::MyError).into_cmp_error(),
+            anchor_lang::error::Error::from(ProgramError::Custom(11))
+                .with_source(source!())
+                .into_cmp_error()
+        );
+    }
 
-//     #[test]
-//     fn test_display_anchor_error() {
-//         let anchor_error = error!(ErrorCode::MyError);
-//         assert_eq!(
-//             format!("{}", anchor_error),
-//             format!("{}", anchor_error.into_cmp_error().unwrap())
-//         );
-//     }
+    #[test]
+    fn test_display_anchor_error() {
+        let anchor_error = error!(ErrorCode::MyError);
+        assert_eq!(
+            format!("{}", anchor_error),
+            format!("{}", anchor_error.into_cmp_error().unwrap())
+        );
+    }
 
-//     #[error_code]
-//     pub enum ErrorCode {
-//         MyError,
-//         MyOtherError,
-//     }
+    #[error_code]
+    pub enum ErrorCode {
+        MyError,
+        MyOtherError,
+    }
 
-//     #[test]
-//     fn test_anchor_errors_eq() {
-//         assert_eq!(
-//             error!(ErrorCode::MyError).into_cmp_error(),
-//             error!(ErrorCode::MyError).into_cmp_error(),
-//         );
-//     }
+    #[test]
+    fn test_anchor_errors_eq() {
+        assert_eq!(
+            error!(ErrorCode::MyError).into_cmp_error(),
+            error!(ErrorCode::MyError).into_cmp_error(),
+        );
+    }
 
-//     #[test]
-//     fn test_anchor_errors_eq_result() {
-//         assert_eq!(
-//             (err!(ErrorCode::MyError) as Result<()>).into_cmp_error(),
-//             (err!(ErrorCode::MyError) as Result<()>).into_cmp_error(),
-//         );
-//     }
+    #[test]
+    fn test_anchor_errors_eq_result() {
+        assert_eq!(
+            (err!(ErrorCode::MyError) as Result<()>).into_cmp_error(),
+            (err!(ErrorCode::MyError) as Result<()>).into_cmp_error(),
+        );
+    }
 
-//     #[test]
-//     fn test_anchor_errors_ne_result() {
-//         assert_ne!(
-//             (err!(ErrorCode::MyError) as Result<()>).into_cmp_error(),
-//             (err!(ErrorCode::MyOtherError) as Result<()>).into_cmp_error(),
-//         );
-//     }
+    #[test]
+    fn test_anchor_errors_ne_result() {
+        assert_ne!(
+            (err!(ErrorCode::MyError) as Result<()>).into_cmp_error(),
+            (err!(ErrorCode::MyOtherError) as Result<()>).into_cmp_error(),
+        );
+    }
 
-//     #[test]
-//     fn test_from_anchor_error() {
-//         let error_a: CmpError = (error!(ErrorCode::MyError)).into();
-//         let error_b: CmpError = (error!(ErrorCode::MyError)).into();
-//         assert_eq!(error_a, error_b);
-//     }
-// }
+    #[test]
+    fn test_from_anchor_error() {
+        let error_a: CmpError = (error!(ErrorCode::MyError)).into();
+        let error_b: CmpError = (error!(ErrorCode::MyError)).into();
+        assert_eq!(error_a, error_b);
+    }
+}
