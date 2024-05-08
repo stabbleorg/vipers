@@ -15,8 +15,8 @@ default = []
 ata = ["spl-associated-token-account"]
 
 [dependencies]
-anchor-lang = "^0.29"
-anchor-spl = "^0.29"
+anchor-lang = "^0.30"
+anchor-spl = "^0.30"
 num-traits = "^0.2"
 spl-associated-token-account = { version = "^2", features = [
     "no-entrypoint",
